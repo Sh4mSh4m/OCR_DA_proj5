@@ -9,7 +9,6 @@ verify_ssl = true
 jupyter = "*"
 pandas = "*"
 matplotlib = "*"
-functions = "*"
 scipy = "*"
 sklearn = "*"
 numpy = "*"
