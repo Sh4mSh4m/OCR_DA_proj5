@@ -95,6 +95,96 @@ def display_factorial_planes(X_projected, n_comp, pca, axis_ranks, labels=None, 
             #plt.savefig("ProjPlanFacto.png",bbox_inches="tight")
             plt.show(block=False)
 
+def display_factorial_planes_custom(X_projected, Centroids_projected, n_comp, pca, axis_ranks, labels=None, alpha=1, illustrative_var=None, centroids_list=None):
+    for d1,d2 in axis_ranks:
+        if d2 < n_comp:
+ 
+            # initialisation de la figure       
+            fig = plt.figure(figsize=(15,15))
+        
+            # affichage des points
+            if illustrative_var is None:
+                plt.scatter(X_projected[:, d1], X_projected[:, d2], alpha=alpha)
+            else:
+                illustrative_var = np.array(illustrative_var)
+                for value in np.unique(illustrative_var):
+                    selected = np.where(illustrative_var == value)
+                    plt.scatter(X_projected[selected, d1], X_projected[selected, d2], alpha=alpha, label=value)
+                plt.legend()
+
+
+            # affichage des labels des points
+            if labels is not None:
+                for i,(x,y) in enumerate(X_projected[:,[d1,d2]]):
+                    plt.text(x, y, labels[i],
+                                  fontsize='14', ha='center',va='center') 
+
+            for i,(x,y) in enumerate(Centroids_projected[:,[d1,d2]]):
+                plt.scatter(x, y, alpha=alpha, label=centroids_list[i], marker="X")
+                plt.legend()
+                plt.text(x, y, centroids_list[i],
+                          fontsize='14', ha='center',va='bottom') 
+            # détermination des limites du graphique
+            boundary = np.max(np.abs(X_projected[:, [d1,d2]])) * 1.1
+            plt.xlim([-boundary,boundary])
+            plt.ylim([-boundary,boundary])
+        
+            # affichage des lignes horizontales et verticales
+            plt.plot([-100, 100], [0, 0], color='grey', ls='--')
+            plt.plot([0, 0], [-100, 100], color='grey', ls='--')
+
+            # nom des axes, avec le pourcentage d'inertie expliqué
+            plt.xlabel('F{} ({}%)'.format(d1+1, round(100*pca.explained_variance_ratio_[d1],1)))
+            plt.ylabel('F{} ({}%)'.format(d2+1, round(100*pca.explained_variance_ratio_[d2],1)))
+
+            plt.title("Projection des individus (sur F{} et F{})".format(d1+1, d2+1))
+            #plt.savefig("ProjPlanFacto.png",bbox_inches="tight")
+            plt.show(block=False)
+
+def display_factorial_planes_filter(X_projected, n_comp, pca, axis_ranks, labels=None, alpha=1, illustrative_var=None, to_display_list=None):
+    for d1,d2 in axis_ranks:
+        if d2 < n_comp:
+ 
+            # initialisation de la figure       
+            fig = plt.figure(figsize=(15,15))
+        
+            # affichage des points
+            if illustrative_var is None:
+                plt.scatter(X_projected[:, d1], X_projected[:, d2], alpha=alpha)
+            else:
+                illustrative_var = np.array(illustrative_var)
+                for value in np.unique(illustrative_var):
+                    selected = np.where(illustrative_var == value)
+                    plt.scatter(X_projected[selected, d1], X_projected[selected, d2], alpha=alpha, label=value)
+                plt.legend()
+
+            # affichage des labels des points
+            if labels is not None:
+                for i,(x,y) in enumerate(X_projected[:,[d1,d2]]):
+                    if to_display_list is not None:
+                        if labels[i] in to_display_list:
+                            plt.text(x, y, labels[i],
+                                      fontsize='14', ha='center',va='center')                         
+                    else:
+                        plt.text(x, y, labels[i],
+                                  fontsize='14', ha='center',va='center') 
+                
+            # détermination des limites du graphique
+            boundary = np.max(np.abs(X_projected[:, [d1,d2]])) * 1.1
+            plt.xlim([-boundary,boundary])
+            plt.ylim([-boundary,boundary])
+        
+            # affichage des lignes horizontales et verticales
+            plt.plot([-100, 100], [0, 0], color='grey', ls='--')
+            plt.plot([0, 0], [-100, 100], color='grey', ls='--')
+
+            # nom des axes, avec le pourcentage d'inertie expliqué
+            plt.xlabel('F{} ({}%)'.format(d1+1, round(100*pca.explained_variance_ratio_[d1],1)))
+            plt.ylabel('F{} ({}%)'.format(d2+1, round(100*pca.explained_variance_ratio_[d2],1)))
+
+            plt.title("Projection des individus (sur F{} et F{})".format(d1+1, d2+1))
+            #plt.savefig("ProjPlanFacto.png",bbox_inches="tight")
+            plt.show(block=False)         
 def display_scree_plot(pca):
     scree = pca.explained_variance_ratio_*100
     plt.bar(np.arange(len(scree))+1, scree)
